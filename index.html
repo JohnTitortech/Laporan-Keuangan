@@ -5,16 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Input Laporan Keuangan</title>
   <style>
-    body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
-    h2 { text-align: center; }
-    label { display: block; margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 40px auto;
+      background: #f7f9fc;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; color: #1976d2; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
     input, select, textarea, button {
-      width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px;
-      border: 1px solid #ccc; box-sizing: border-box;
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
     }
     button {
-      background: #1976d2; color: white; border: none; cursor: pointer;
-      margin-top: 15px; font-size: 16px; border-radius: 5px;
+      background: #1976d2;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+      font-size: 16px;
+      border-radius: 5px;
+      padding: 10px;
     }
     button:hover { background: #0d47a1; }
     #status { text-align: center; margin-top: 15px; font-weight: bold; }
@@ -23,34 +41,34 @@
 <body>
   <h2>Laporan Keuangan</h2>
   <form id="keuanganForm">
-    <label>Tanggal</label>
-    <input type="date" id="tanggal" required>
+    <label for="Tanggal">Tanggal</label>
+    <input type="date" id="Tanggal" required>
 
-    <label>Deskripsi</label>
-    <textarea id="keperluan" rows="3" required></textarea>
+    <label for="Keperluan">Keperluan</label>
+    <textarea id="Keperluan" rows="3" required></textarea>
 
-    <label>Akun</label>
-    <select id="jenis" required>
+    <label for="Jenis">Jenis</label>
+    <select id="Jenis" required>
       <option value="Mandiri">Mandiri</option>
       <option value="CIMB">CIMB</option>
       <option value="Dompet">Dompet</option>
       <option value="Rumah">Rumah</option>
     </select>
 
-    <label>Tipe</label>
-    <select id="tipe" required>
+    <label for="Tipe">Tipe</label>
+    <select id="Tipe" required>
       <option value="+">+</option>
       <option value="-">-</option>
     </select>
 
-    <label>Kategori</label>
-    <select id="kategori" required>
+    <label for="Kategori">Kategori</label>
+    <select id="Kategori" required>
       <option value="Kebutuhan">Kebutuhan</option>
       <option value="Keinginan">Keinginan</option>
     </select>
 
-    <label>Jumlah (Rp)</label>
-    <input type="number" id="jumlah" required>
+    <label for="Jumlah">Jumlah (Rp)</label>
+    <input type="number" id="Jumlah" required>
 
     <button type="submit">Kirim</button>
   </form>
@@ -58,19 +76,19 @@
   <p id="status"></p>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxUJg9wyFNh_PZdvquFlCuvIXItgeyFy7biA6EqHvpe4mXtqzWN8QMO0DzMN1Y8eeO8/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbz5pXcBwBiSjgSDdnfU6p0DdtwNcKybOe-LUfcxMnURm9-2_sCsKPLhGN9ZO1ZGdVEU/exec";
 
     document.getElementById("keuanganForm").addEventListener("submit", e => {
       e.preventDefault();
       document.getElementById("status").innerText = "Mengirim data... ⏳";
 
       const data = {
-        tanggal: document.getElementById("tanggal").value,
-        deskripsi: document.getElementById("deskripsi").value,
-        akun: document.getElementById("akun").value,
-        tipe: document.getElementById("tipe").value,
-        kategori: document.getElementById("kategori").value,
-        jumlah: document.getElementById("jumlah").value
+        Tanggal: document.getElementById("Tanggal").value,
+        Keperluan: document.getElementById("Keperluan").value,
+        Jenis: document.getElementById("Jenis").value,
+        Tipe: document.getElementById("Tipe").value,
+        Kategori: document.getElementById("Kategori").value,
+        Jumlah: document.getElementById("Jumlah").value
       };
 
       fetch(scriptURL, {

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Laporan Keuangan</title>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 10px; }
+    input, select, textarea, button {
+      width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px;
+      border: 1px solid #ccc; box-sizing: border-box;
+    }
+    button {
+      background: #1976d2; color: white; border: none; cursor: pointer;
+      margin-top: 15px; font-size: 16px; border-radius: 5px;
+    }
+    button:hover { background: #0d47a1; }
+    #status { text-align: center; margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Laporan Keuangan</h2>
+  <form id="keuanganForm">
+    <label>Tanggal</label>
+    <input type="date" id="tanggal" required>
+
+    <label>Deskripsi</label>
+    <textarea id="keperluan" rows="3" required></textarea>
+
+    <label>Akun</label>
+    <select id="jenis" required>
+      <option value="Mandiri">Mandiri</option>
+      <option value="CIMB">CIMB</option>
+      <option value="Dompet">Dompet</option>
+      <option value="Rumah">Rumah</option>
+    </select>
+
+    <label>Tipe</label>
+    <select id="tipe" required>
+      <option value="+">+</option>
+      <option value="-">-</option>
+    </select>
+
+    <label>Kategori</label>
+    <select id="kategori" required>
+      <option value="Kebutuhan">Kebutuhan</option>
+      <option value="Keinginan">Keinginan</option>
+    </select>
+
+    <label>Jumlah (Rp)</label>
+    <input type="number" id="jumlah" required>
+
+    <button type="submit">Kirim</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxUJg9wyFNh_PZdvquFlCuvIXItgeyFy7biA6EqHvpe4mXtqzWN8QMO0DzMN1Y8eeO8/exec";
+
+    document.getElementById("keuanganForm").addEventListener("submit", e => {
+      e.preventDefault();
+      document.getElementById("status").innerText = "Mengirim data... ⏳";
+
+      const data = {
+        tanggal: document.getElementById("tanggal").value,
+        deskripsi: document.getElementById("deskripsi").value,
+        akun: document.getElementById("akun").value,
+        tipe: document.getElementById("tipe").value,
+        kategori: document.getElementById("kategori").value,
+        jumlah: document.getElementById("jumlah").value
+      };
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(data)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("status").innerText = "✅ Data berhasil dikirim!";
+          document.getElementById("keuanganForm").reset();
+        } else {
+          document.getElementById("status").innerText = "❌ Gagal mengirim data.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("status").innerText = "⚠️ Terjadi kesalahan koneksi.";
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>

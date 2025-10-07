@@ -3,60 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laporan Keuangan (Bootstrap 5)</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Laporan Keuangan (Tailwind)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-light">
-  <div class="container mt-5">
-    <div class="card shadow p-4">
-      <h2 class="text-center text-primary mb-4">Laporan Keuangan</h2>
-      <form id="keuanganForm">
-        <div class="mb-3">
-          <label for="Tanggal" class="form-label">Tanggal</label>
-          <input type="date" class="form-control" id="Tanggal" required>
-        </div>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-semibold text-center text-blue-600 mb-6">Laporan Keuangan</h2>
+    <form id="keuanganForm" class="space-y-4">
+      <div>
+        <label for="Tanggal" class="block font-medium">Tanggal</label>
+        <input type="date" id="Tanggal" required class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
 
-        <div class="mb-3">
-          <label for="Keperluan" class="form-label">Keperluan</label>
-          <textarea class="form-control" id="Keperluan" rows="3" required></textarea>
-        </div>
+      <div>
+        <label for="Keperluan" class="block font-medium">Keperluan</label>
+        <textarea id="Keperluan" rows="3" required class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+      </div>
 
-        <div class="mb-3">
-          <label for="Jenis" class="form-label">Jenis</label>
-          <select class="form-select" id="Jenis" required>
-            <option value="Mandiri">Mandiri</option>
-            <option value="CIMB">CIMB</option>
-            <option value="Dompet">Dompet</option>
-            <option value="Rumah">Rumah</option>
-          </select>
-        </div>
+      <div>
+        <label for="Jenis" class="block font-medium">Jenis</label>
+        <select id="Jenis" required class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
+          <option value="Mandiri">Mandiri</option>
+          <option value="CIMB">CIMB</option>
+          <option value="Dompet">Dompet</option>
+          <option value="Rumah">Rumah</option>
+        </select>
+      </div>
 
-        <div class="mb-3">
-          <label for="Tipe" class="form-label">Tipe</label>
-          <select class="form-select" id="Tipe" required>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="Tipe" class="block font-medium">Tipe</label>
+          <select id="Tipe" required class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="+">+</option>
             <option value="-">-</option>
           </select>
         </div>
-
-        <div class="mb-3">
-          <label for="Kategori" class="form-label">Kategori</label>
-          <select class="form-select" id="Kategori" required>
+        <div>
+          <label for="Kategori" class="block font-medium">Kategori</label>
+          <select id="Kategori" required class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="Kebutuhan">Kebutuhan</option>
             <option value="Keinginan">Keinginan</option>
           </select>
         </div>
+      </div>
 
-        <div class="mb-3">
-          <label for="Jumlah" class="form-label">Jumlah (Rp)</label>
-          <input type="number" class="form-control" id="Jumlah" required>
-        </div>
+      <div>
+        <label for="Jumlah" class="block font-medium">Jumlah (Rp)</label>
+        <input type="number" id="Jumlah" required class="w-full border border-gray-300 rounded-lg p-2 mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
 
-        <button type="submit" class="btn btn-primary w-100">Kirim</button>
-      </form>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
+        Kirim
+      </button>
+    </form>
 
-      <p id="status" class="text-center mt-3 fw-bold"></p>
-    </div>
+    <p id="status" class="text-center font-semibold mt-4"></p>
   </div>
 
   <script>

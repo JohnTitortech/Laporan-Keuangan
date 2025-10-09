@@ -4,10 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Laporan Keuangan Pribadi</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <style>
     :root{
       --bg-gradient: linear-gradient(135deg,#bfe6ff 0%, #d9f1ff 40%, #e9dbff 100%);
@@ -23,7 +21,7 @@
     body{
       font-family:"Poppins",system-ui;
       background:var(--bg-gradient);
-      display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
       padding:18px;
     }
     .card{
@@ -35,9 +33,21 @@
       border:1px solid var(--glass-border);
       box-shadow:0 12px 40px rgba(12,30,50,0.12);
       box-sizing:border-box;
+      display:none;
     }
-    .title{font-size:20px;font-weight:700;text-align:center;color:var(--text-dark);}
+    .card.active{display:block;}
+    .title{text-align:center;font-size:22px;font-weight:700;color:var(--text-dark);}
     .subtitle{text-align:center;color:var(--muted);font-size:13px;margin-bottom:16px;}
+    .btn{
+      width:100%;padding:12px 14px;border:none;border-radius:12px;
+      font-weight:700;color:white;font-size:15px;
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      box-shadow:0 8px 24px rgba(79,172,254,0.2);
+      cursor:pointer;transition:all 0.2s ease-in-out;margin-top:8px;
+    }
+    .btn:hover{transform:scale(1.02);}
+    .btn.alt{background:linear-gradient(90deg,#ec4899,#f87171);}
+    .status{text-align:center;font-weight:600;margin-top:10px;color:var(--muted)}
     form label{display:block;font-size:13px;font-weight:600;color:var(--text-dark);margin-bottom:6px}
     .field{margin-bottom:10px}
     input,select,textarea{
@@ -48,99 +58,131 @@
     }
     textarea{min-height:78px;resize:vertical}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .btn{
-      width:100%;padding:12px 14px;border:none;border-radius:12px;
-      font-weight:700;color:white;font-size:15px;
-      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
-      box-shadow:0 8px 24px rgba(79,172,254,0.2);cursor:pointer;
-      margin-top:8px;
-    }
-    .btn.alt{background:linear-gradient(90deg,#ec4899,#f87171);}
-    .status{text-align:center;font-weight:600;margin-top:10px;color:var(--muted)}
-    #chartContainer{display:none;margin-top:20px;width:100%;max-width:420px}
-    canvas{width:100%!important;height:auto!important;margin-top:12px;background:white;border-radius:16px;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+    /* --- Layout Chart 2x2 --- */
+    body {
+  background: linear-gradient(135deg, #c8e9ff, #e4f0ff);
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ======== Layout Grafik Responsif ======== */
+#chartContainer.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  padding: 25px;
+}
+
+/* Khusus layar lebar (Laptop / Desktop) */
+@media (min-width: 1024px) {
+  #chartContainer.active {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  #chartContainer canvas {
+    width: 320px !important;
+    height: 320px !important;
+    margin: 0 12px;
+  }
+
+  #chartContainer .title {
+    flex-basis: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  #backToMenu2 {
+    flex-basis: 100%;
+    max-width: 240px;
+    align-self: center;
+  }
+}
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1 class="title">Laporan Keuangan</h1>
-    <p class="subtitle">Catat transaksi pribadi dengan cepat</p>
+  <!-- Menu Awal -->
+  <main id="menuAwal" class="card active">
+    <h1 class="title">📘 Laporan Keuangan</h1>
+    <p class="subtitle">Kelola dan pantau keuanganmu dengan mudah</p>
+    <button id="btnInput" class="btn">✏️ Input Data Keuangan</button>
+    <button id="btnGrafik" class="btn alt">📊 Tampilkan Grafik</button>
+  </main>
 
+  <!-- Form Input -->
+  <main id="formContainer" class="card">
+    <h1 class="title">Input Data Keuangan</h1>
     <form id="keuanganForm">
-      <div class="field">
-        <label for="Tanggal">Tanggal</label>
-        <input id="Tanggal" type="date" required />
-      </div>
-      <div class="field">
-        <label for="Keperluan">Keperluan</label>
-        <textarea id="Keperluan" required></textarea>
-      </div>
-      <div class="field">
-        <label for="Jenis">Jenis</label>
+      <div class="field"><label for="Tanggal">Tanggal</label><input id="Tanggal" type="date" required></div>
+      <div class="field"><label for="Keperluan">Keperluan</label><textarea id="Keperluan" required></textarea></div>
+      <div class="field"><label for="Jenis">Jenis</label>
         <select id="Jenis" required>
-          <option value="Mandiri">Mandiri</option>
-          <option value="CIMB">CIMB</option>
-          <option value="Dompet">Dompet</option>
-          <option value="Rumah">Rumah</option>
+          <option value="Mandiri">Mandiri</option><option value="CIMB">CIMB</option>
+          <option value="Dompet">Dompet</option><option value="Rumah">Rumah</option>
         </select>
       </div>
       <div class="grid-2">
-        <div class="field">
-          <label for="Tipe">Tipe</label>
+        <div class="field"><label for="Tipe">Tipe</label>
           <select id="Tipe" required>
-            <option value="+">+</option>
-            <option value="-">-</option>
+            <option value="+">+</option><option value="-">-</option>
           </select>
         </div>
-        <div class="field">
-          <label for="Kategori">Kategori</label>
-          <select id="Kategori" required></select>
-        </div>
+        <div class="field"><label for="Kategori">Kategori</label><select id="Kategori" required></select></div>
       </div>
-      <div class="field">
-        <label for="Jumlah">Jumlah (Rp)</label>
-        <input id="Jumlah" type="number" required />
-      </div>
-      <button type="submit" class="btn">Kirim Data 💾</button>
+      <div class="field"><label for="Jumlah">Jumlah (Rp)</label><input id="Jumlah" type="number" required></div>
+      <button type="submit" class="btn">💾 Simpan Data</button>
+      <button type="button" id="backToMenu1" class="btn alt">⬅️ Kembali</button>
     </form>
-
-    <button id="showChart" class="btn alt">Tampilkan Semua Grafik 📊</button>
     <div id="status" class="status"></div>
   </main>
 
-  <div id="chartContainer">
+  <!-- Grafik -->
+  <main id="chartContainer" class="card">
+    <h1 class="title">📈 Statistik Keuangan</h1>
+    <label for="bulanSelect" style="font-weight:600;color:#08203a;">Pilih Bulan:</label>
+    <select id="bulanSelect" class="field" style="margin-bottom:10px;"></select>
     <canvas id="chartPengeluaran"></canvas>
     <canvas id="chartPemasukan"></canvas>
     <canvas id="chartRasio"></canvas>
-  </div>
+    <button id="backToMenu2" class="btn alt">⬅️ Kembali</button>
+  </main>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbxRRwwWLAzfiWPe-wfhWdieBK5XRQdTLnPO2dyUIdtjPdljtQ7k1NNV51u3lsJCpS8/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwH-9_j9gT7ttITIQ4vobjs-Rp-oNSxkYLb2XoBGTZIrVqjhGsJwb4QCdkvq1Kr5ufr/exec";
 
 const form = document.getElementById('keuanganForm');
 const tipeEl = document.getElementById('Tipe');
 const kategoriEl = document.getElementById('Kategori');
 const statusEl = document.getElementById('status');
 const chartContainer = document.getElementById('chartContainer');
+const menuAwal = document.getElementById('menuAwal');
+const formContainer = document.getElementById('formContainer');
+let charts=[];
 
-let charts = [];
-
-const kategoriMap = {
-  "+": ["Gaji", "Ortu", "Lutfi", "Tarik tunai", "Transfer"],
-  "-": ["Kebutuhan", "Keinginan"]
-};
-
-// isi awal dropdown kategori
-function refreshKategori() {
-  const selected = tipeEl.value;
-  kategoriEl.innerHTML = "";
-  kategoriMap[selected].forEach(item=>{
+const kategoriMap={"+":["Gaji","Ortu","Lutfi","Tarik tunai","Transfer"],"-":["Kebutuhan","Keinginan"]};
+function refreshKategori(){
+  const sel=tipeEl.value;
+  kategoriEl.innerHTML="";
+  kategoriMap[sel].forEach(item=>{
     const opt=document.createElement("option");
     opt.value=item;opt.textContent=item;kategoriEl.appendChild(opt);
   });
 }
-tipeEl.addEventListener("change",refreshKategori);
-refreshKategori();
+tipeEl.addEventListener("change",refreshKategori);refreshKategori();
+
+// navigasi antar halaman
+document.getElementById("btnInput").onclick=()=>{menuAwal.classList.remove('active');formContainer.classList.add('active');}
+document.getElementById("btnGrafik").onclick = () => {
+  menuAwal.classList.remove('active');
+  chartContainer.classList.add('active');
+  initBulanSelect(); // load daftar bulan
+  loadCharts();      // tampilkan default bulan sekarang
+};
+document.getElementById("backToMenu1").onclick=()=>{formContainer.classList.remove('active');menuAwal.classList.add('active');}
+document.getElementById("backToMenu2").onclick=()=>{chartContainer.classList.remove('active');menuAwal.classList.add('active');}
 
 // kirim data
 form.addEventListener("submit",async(e)=>{
@@ -159,85 +201,74 @@ form.addEventListener("submit",async(e)=>{
     if(res.ok){
       statusEl.textContent="✅ Data berhasil dikirim!";
       statusEl.style.color="#16a34a";
-      form.reset();
-      refreshKategori();
+      form.reset();refreshKategori();
     }else throw new Error();
   }catch{
-    statusEl.textContent="❌ Gagal mengirim data.";
-    statusEl.style.color="#b91c1c";
+    statusEl.textContent="❌ Gagal mengirim data.";statusEl.style.color="#b91c1c";
   }
 });
 
-// tampilkan grafik
-document.getElementById('showChart').addEventListener('click', async ()=>{
-  statusEl.textContent="📊 Memuat grafik...";
-  chartContainer.style.display='block';
+// load grafik
+async function initBulanSelect() {
+  try {
+    const res = await fetch(scriptURL + '?action=getSheets');
+    const sheets = await res.json();
+    const select = document.getElementById('bulanSelect');
+    select.innerHTML = '';
 
-  try{
-    const res = await fetch(scriptURL + '?action=getData');
+    // isi dropdown
+    sheets.forEach(sheet => {
+      const opt = document.createElement('option');
+      opt.value = sheet;
+      opt.textContent = sheet;
+      select.appendChild(opt);
+    });
+
+    // pilih default bulan sekarang
+    const bulanNow = new Date().toLocaleString('id-ID', { month: 'long' });
+    const bulanNowCapital = bulanNow.charAt(0).toUpperCase() + bulanNow.slice(1);
+    select.value = bulanNowCapital;
+
+    select.addEventListener('change', () => {
+      loadCharts(select.value);
+    });
+
+  } catch (err) {
+    alert("Gagal memuat daftar bulan!");
+  }
+}
+
+async function loadCharts(bulan = null) {
+  try {
+    const query = bulan ? `?action=getData&bulan=${bulan}` : '?action=getData';
+    const res = await fetch(scriptURL + query);
     const data = await res.json();
 
-    // ===== PENGELUARAN =====
-    const kebutuhan = data.filter(d=>d.Tipe==='-' && d.Kategori==='Kebutuhan')
-      .reduce((a,b)=>a+Number(b.Jumlah||0),0);
-    const keinginan = data.filter(d=>d.Tipe==='-' && d.Kategori==='Keinginan')
-      .reduce((a,b)=>a+Number(b.Jumlah||0),0);
+    // hitung dan buat grafik seperti sebelumnya
+    const kebutuhan=data.filter(d=>d.Tipe==='-'&&d.Kategori==='Kebutuhan').reduce((a,b)=>a+Number(b.Jumlah||0),0);
+    const keinginan=data.filter(d=>d.Tipe==='-'&&d.Kategori==='Keinginan').reduce((a,b)=>a+Number(b.Jumlah||0),0);
     const totalKeluar=kebutuhan+keinginan;
 
-    // ===== PEMASUKAN =====
-    const sumber=["Gaji","Ortu","Lutfi","Tarik tunai", "Transfer"];
-    const masukVal=sumber.map(k=>data.filter(d=>d.Tipe==='+'&&d.Kategori===k)
-      .reduce((a,b)=>a+Number(b.Jumlah||0),0));
+    const sumber=["Gaji","Ortu","Lutfi","Tarik tunai","Transfer"];
+    const masukVal=sumber.map(k=>data.filter(d=>d.Tipe==='+'&&d.Kategori===k).reduce((a,b)=>a+Number(b.Jumlah||0),0));
     const totalMasuk=masukVal.reduce((a,b)=>a+b,0);
-
-    // ===== RASIO MASUK : KELUAR =====
     const totalAll=totalMasuk+totalKeluar;
 
-    // hapus grafik lama
-    charts.forEach(c=>c.destroy());
-    charts=[];
+    charts.forEach(c=>c.destroy());charts=[];
 
     const ctx1=document.getElementById('chartPengeluaran').getContext('2d');
-    charts.push(new Chart(ctx1,{
-      type:'pie',
-      data:{
-        labels:[`Kebutuhan (${((kebutuhan/totalKeluar)*100||0).toFixed(1)}%)`,
-                `Keinginan (${((keinginan/totalKeluar)*100||0).toFixed(1)}%)`],
-        datasets:[{data:[kebutuhan,keinginan],backgroundColor:['#3b82f6','#f97316']}]
-      },
-      options:{plugins:{title:{display:true,text:'Pengeluaran (-)'}}}
-    }));
+    charts.push(new Chart(ctx1,{type:'pie',data:{labels:[`Kebutuhan (${((kebutuhan/totalKeluar)*100||0).toFixed(1)}%)`,`Keinginan (${((keinginan/totalKeluar)*100||0).toFixed(1)}%)`],datasets:[{data:[kebutuhan,keinginan],backgroundColor:['#3b82f6','#f97316']}]},options:{plugins:{title:{display:true,text:'Pengeluaran'}}}}));
 
     const ctx2=document.getElementById('chartPemasukan').getContext('2d');
-    charts.push(new Chart(ctx2,{
-      type:'pie',
-      data:{
-        labels:sumber.map((s,i)=>`${s} (${((masukVal[i]/totalMasuk)*100||0).toFixed(1)}%)`),
-        datasets:[{data:masukVal,backgroundColor:['#10b981','#06b6d4','#6366f1','#facc15']}]
-      },
-      options:{plugins:{title:{display:true,text:'Pemasukan (+)'}}}
-    }));
+    charts.push(new Chart(ctx2,{type:'pie',data:{labels:sumber.map((s,i)=>`${s} (${((masukVal[i]/totalMasuk)*100||0).toFixed(1)}%)`),datasets:[{data:masukVal,backgroundColor:['#10b981','#06b6d4','#6366f1','#facc15']}]},options:{plugins:{title:{display:true,text:'Pemasukan'}}}}));
 
     const ctx3=document.getElementById('chartRasio').getContext('2d');
-    charts.push(new Chart(ctx3,{
-      type:'pie',
-      data:{
-        labels:[
-          `Pemasukan (${((totalMasuk/totalAll)*100||0).toFixed(1)}%)`,
-          `Pengeluaran (${((totalKeluar/totalAll)*100||0).toFixed(1)}%)`
-        ],
-        datasets:[{data:[totalMasuk,totalKeluar],backgroundColor:['#16a34a','#dc2626']}]
-      },
-      options:{plugins:{title:{display:true,text:'Rasio Pemasukan vs Pengeluaran'}}}
-    }));
+    charts.push(new Chart(ctx3,{type:'pie',data:{labels:[`Pemasukan (${((totalMasuk/totalAll)*100||0).toFixed(1)}%)`,`Pengeluaran (${((totalKeluar/totalAll)*100||0).toFixed(1)}%)`],datasets:[{data:[totalMasuk,totalKeluar],backgroundColor:['#16a34a','#dc2626']}]},options:{plugins:{title:{display:true,text:'Rasio Pemasukan vs Pengeluaran'}}}}));
 
-    statusEl.textContent="✅ Semua grafik berhasil dimuat!";
-    statusEl.style.color="#16a34a";
-  }catch(err){
-    statusEl.textContent="⚠️ Gagal memuat grafik.";
-    statusEl.style.color="#b91c1c";
+  } catch {
+    alert("Gagal memuat grafik!");
   }
-});
+}
 </script>
 </body>
 </html>

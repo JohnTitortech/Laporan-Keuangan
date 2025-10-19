@@ -1,337 +1,435 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Laporan Keuangan Pribadi</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laporan Keuangan</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- ====================== STYLE SECTION ====================== -->
   <style>
-    :root {
-      --bg-gradient: linear-gradient(135deg,#bfe6ff 0%, #d9f1ff 40%, #e9dbff 100%);
-      --glass-border: rgba(255,255,255,0.35);
-      --accent-1: #4facfe;
-      --accent-2: #00f2fe;
-      --text-dark: #08203a;
-      --muted: #5b6b78;
-      --radius: 16px;
-      --card-w: 420px;
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
     }
 
-    html, body {height:100%;margin:0}
     body {
-      font-family:"Poppins",system-ui;
-      background:var(--bg-gradient);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
+      background-color: #f9fafc;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
     }
 
-    .card {
-      width:100%;
-      max-width:var(--card-w);
-      border-radius:var(--radius);
-      padding:22px;
-      background:linear-gradient(180deg,rgba(255,255,255,0.45),rgba(255,255,255,0.12));
-      backdrop-filter:blur(10px) saturate(130%);
-      border:1px solid var(--glass-border);
-      box-shadow:0 12px 40px rgba(12,30,50,0.12);
-      box-sizing:border-box;
-      display:none;
+    .container {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
     }
-    .card.active {display:block;}
 
-    .title {text-align:center;font-size:22px;font-weight:700;color:var(--text-dark);}
-    .subtitle {text-align:center;color:var(--muted);font-size:13px;margin-bottom:16px;}
+    h1 {
+      font-size: 2rem;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      color: #475569;
+      margin-bottom: 2rem;
+    }
+
+    /* Tombol navigasi atas */
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
 
     .btn {
-      width:100%;
-      padding:12px 14px;
-      border:none;
-      border-radius:12px;
-      font-weight:700;
-      color:white;
-      font-size:15px;
-      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
-      box-shadow:0 8px 24px rgba(79,172,254,0.2);
-      cursor:pointer;
-      transition:all 0.2s ease-in-out;
-      margin-top:8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background-color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
     }
-    .btn:hover {transform:scale(1.02);}
-    .btn.alt {background:linear-gradient(90deg,#ec4899,#f87171);}
-    .status {text-align:center;font-weight:600;margin-top:10px;color:var(--muted)}
 
-    form label {display:block;font-size:13px;font-weight:600;color:var(--text-dark);margin-bottom:6px}
-    .field {margin-bottom:10px}
-    input,select,textarea {
-      width:100%;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(10,20,30,0.06);
-      background:rgba(255,255,255,0.7);
-      font-size:15px;
-      box-sizing:border-box;
+    .btn:hover {
+      background-color: #f1f5f9;
     }
-    textarea {min-height:78px;resize:vertical}
-    .grid-2 {display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-    /* ===== Layout Grafik Responsif ===== */
-    #chartContainer.active {
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+    }
+
+    /* Kartu/form */
+    .card {
+      background-color: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      text-align: left;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #1e293b;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      color: #334155;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .row {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 25px;
-      padding: 25px;
+      gap: 10px;
     }
 
-    /* Laptop (1366x768) */
-    @media (min-width: 1024px) {
-      #chartContainer.active {
-        flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
-        flex-wrap: nowrap;
-      }
-      #chartContainer canvas {
-        width: 320px !important;
-        height: 320px !important;
-        margin: 0 12px;
-      }
-      #chartContainer .title {
-        flex-basis: 100%;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      #backToMenu2 {
-        flex-basis: 100%;
-        max-width: 240px;
-        align-self: center;
-      }
+    .row > div {
+      flex: 1;
+    }
+
+    /* Tombol aksi bawah */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .action-buttons .btn {
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
+  <!-- ====================== END STYLE SECTION ====================== -->
 </head>
-
 <body>
-  <!-- Menu Awal -->
-  <main id="menuAwal" class="card active">
-    <h1 class="title">📘 Laporan Keuangan</h1>
+
+  <!-- ====================== MAIN CONTAINER ====================== -->
+  <div class="container">
+    <h1>Laporan Keuangan</h1>
     <p class="subtitle">Kelola dan pantau keuanganmu dengan mudah</p>
-    <button id="btnInput" class="btn">✏️ Input Data Keuangan</button>
-    <button id="btnGrafik" class="btn alt">📊 Tampilkan Grafik</button>
-  </main>
 
-  <!-- Form Input -->
-  <main id="formContainer" class="card">
-    <h1 class="title">Input Data Keuangan</h1>
-    <form id="keuanganForm">
-      <div class="field"><label for="Tanggal">Tanggal</label><input id="Tanggal" type="date" required></div>
-      <div class="field"><label for="Keperluan">Keperluan</label><textarea id="Keperluan" required></textarea></div>
-      <div class="field">
-        <label for="Jenis">Jenis</label>
-        <select id="Jenis" required>
-          <option value="Mandiri">Mandiri</option>
-          <option value="CIMB">CIMB</option>
-          <option value="Dompet">Dompet</option>
-          <option value="Rumah">Rumah</option>
-        </select>
-      </div>
-      <div class="grid-2">
-        <div class="field">
-          <label for="Tipe">Tipe</label>
-          <select id="Tipe" required>
-            <option value="+">+</option>
-            <option value="-">-</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="Kategori">Kategori</label>
-          <select id="Kategori" required></select>
-        </div>
-      </div>
-      <div class="field"><label for="Jumlah">Jumlah (Rp)</label><input id="Jumlah" type="number" required></div>
-      <button type="submit" class="btn">💾 Simpan Data</button>
-      <button type="button" id="backToMenu1" class="btn alt">⬅️ Kembali</button>
-    </form>
-    <div id="status" class="status"></div>
-  </main>
-
-  <!-- Grafik -->
-  <main id="chartContainer" class="card">
-    <h1 class="title">📈 Statistik Keuangan</h1>
-
-    <div style="text-align:center;margin-bottom:12px;">
-      <label for="bulanSelect" style="font-weight:600;color:#08203a;">Pilih Bulan:</label>
-      <select id="bulanSelect" style="padding:6px 10px;border-radius:8px;border:1px solid #ccc;"></select>
+    <!-- ======== MENU NAVIGATION ======== -->
+    <div class="button-group">
+      <button id="btnKeuangan" class="btn btn-primary">Input Data Keuangan</button>
+      <button id="btnEmoney" class="btn">E-money & E-wallet</button>
     </div>
 
-    <canvas id="chartPengeluaran"></canvas>
-    <canvas id="chartPemasukan"></canvas>
-    <canvas id="chartRasio"></canvas>
-    <button id="backToMenu2" class="btn alt">⬅️ Kembali</button>
-  </main>
+    <!-- ============================================================= -->
+    <!-- =============== FORM INPUT DATA KEUANGAN ==================== -->
+    <!-- ============================================================= -->
+    <div id="formKeuangan" class="card">
+      <h2>Input Data Keuangan</h2>
 
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycby7TFr5AnkqMNvopSDHHkdgJvAoKRw924r0paRy7HTBM1kAKS-l2OvuQ8eEPyX3iys/exec";
+      <label for="tglKeuangan">Tanggal</label>
+      <input type="date" id="tglKeuangan">
 
-    const form = document.getElementById('keuanganForm');
-    const tipeEl = document.getElementById('Tipe');
-    const kategoriEl = document.getElementById('Kategori');
-    const statusEl = document.getElementById('status');
-    const chartContainer = document.getElementById('chartContainer');
-    const menuAwal = document.getElementById('menuAwal');
-    const formContainer = document.getElementById('formContainer');
-    let charts = [];
+      <div class="row">
+        <div>
+          <label for="keperluanKeuangan">Keperluan</label>
+          <input type="text" id="keperluanKeuangan" placeholder="Masukkan keperluan">
+        </div>
+        <div>
+          <label for="jenisKeuangan">Jenis</label>
+          <select id="jenisKeuangan">
+            <option>Pilih...</option>
+            <option>Mandiri</option>
+            <option>CIMB</option>
+            <option>Jenius</option>
+            <option>Dompet</option>
+            <option>Rumah</option>
+          </select>
+        </div>
+      </div>
 
-    const kategoriMap = {
-      "+": ["Gaji", "Ortu", "Lutfi", "Tarik tunai", "Transfer"],
-      "-": ["Kebutuhan", "Keinginan"]
-    };
+      <div class="row">
+        <div>
+          <label for="tipeKeuangan">Tipe</label>
+          <select id="tipeKeuangan">
+            <option>Pilih...</option>
+            <option>+</option>
+            <option>-</option>
+          </select>
+        </div>
+        <div>
+          <label for="kategoriKeuangan">Kategori</label>
+          <select id="kategoriKeuangan">
+            <option>Pilih...</option>
+          </select>
+        </div>
+      </div>
 
-    function refreshKategori() {
-      const sel = tipeEl.value;
-      kategoriEl.innerHTML = "";
-      kategoriMap[sel].forEach(item => {
-        const opt = document.createElement("option");
-        opt.value = item;
-        opt.textContent = item;
-        kategoriEl.appendChild(opt);
+      <label for="jumlahKeuangan">Jumlah</label>
+      <input type="number" id="jumlahKeuangan" placeholder="Masukkan nominal">
+
+      <div class="action-buttons">
+        <button class="btn btn-primary">Simpan Data</button>
+        <button class="btn">Tampilkan Grafik</button>
+        <button class="btn">Kembali</button>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- =============== FORM INPUT E-MONEY & E-WALLET =============== -->
+    <!-- ============================================================= -->
+    <div id="formEmoney" class="card hidden">
+      <h2>Input Data E-money & E-wallet</h2>
+
+      <label for="tglEmoney">Tanggal</label>
+      <input type="date" id="tglEmoney">
+
+      <div class="row">
+        <div>
+          <label for="keperluanEmoney">Keperluan</label>
+          <input type="text" id="keperluanEmoney" placeholder="Masukkan keperluan">
+        </div>
+        <div>
+          <label for="jenisEmoney">Jenis</label>
+          <select id="jenisEmoney">
+            <option>Pilih...</option>
+            <option>KRL</option>
+            <option>E-money</option>
+            <option>Dana</option>
+            <option>Ovo</option>
+            <option>Gopay</option>
+            <option>Shopeepay</option>
+            <option>Seabank</option>
+            <option></option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="tipeEmoney">Tipe</label>
+          <select id="tipeEmoney">
+            <option>Pilih...</option>
+            <option>+</option>
+            <option>-</option>
+          </select>
+        </div>
+        <div>
+          <label for="kategoriEmoney">Kategori</label>
+          <select id="kategoriEmoney">
+            <option>Pilih...</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="jumlahEmoney">Jumlah</label>
+      <input type="number" id="jumlahEmoney" placeholder="Masukkan nominal">
+
+      <div class="action-buttons">
+        <button class="btn btn-primary">Simpan Data</button>
+        <button class="btn">Tampilkan Grafik</button>
+        <button class="btn">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== SCRIPT SECTION ====================== -->
+  <!-- ====================== SCRIPT SECTION ====================== -->
+<script>
+  /* ------------------------------------------------------------
+     BAGIAN 1 — DEKLARASI ELEMEN NAVIGASI
+  ------------------------------------------------------------ */
+  const btnKeuangan = document.getElementById('btnKeuangan');
+  const btnEmoney   = document.getElementById('btnEmoney');
+  const formKeuangan = document.getElementById('formKeuangan');
+  const formEmoney   = document.getElementById('formEmoney');
+
+  /* ------------------------------------------------------------
+     BAGIAN 2 — LOGIKA TOMBOL BERPINDAH FORM
+  ------------------------------------------------------------ */
+  btnKeuangan.addEventListener('click', () => {
+    btnKeuangan.classList.add('btn-primary');
+    btnEmoney.classList.remove('btn-primary');
+    formKeuangan.classList.remove('hidden');
+    formEmoney.classList.add('hidden');
+  });
+
+  btnEmoney.addEventListener('click', () => {
+    btnEmoney.classList.add('btn-primary');
+    btnKeuangan.classList.remove('btn-primary');
+    formEmoney.classList.remove('hidden');
+    formKeuangan.classList.add('hidden');
+  });
+
+  /* ------------------------------------------------------------
+     BAGIAN 3 — LOGIKA OTOMATISASI KATEGORI (KEUANGAN)
+  ------------------------------------------------------------ */
+  const tipeKeuangan = document.getElementById('tipeKeuangan');
+  const kategoriKeuangan = document.getElementById('kategoriKeuangan');
+
+  tipeKeuangan.addEventListener('change', () => {
+    kategoriKeuangan.innerHTML = '<option>Pilih...</option>';
+    if (tipeKeuangan.value === '+') {
+      ['Gaji', 'Ortu', 'Lutfi', 'Tarik Tunai', 'Transfer'].forEach(opt => {
+        const o = document.createElement('option');
+        o.textContent = opt;
+        kategoriKeuangan.appendChild(o);
+      });
+    } else if (tipeKeuangan.value === '-') {
+      ['Kebutuhan', 'Keinginan'].forEach(opt => {
+        const o = document.createElement('option');
+        o.textContent = opt;
+        kategoriKeuangan.appendChild(o);
       });
     }
-    tipeEl.addEventListener("change", refreshKategori);
-    refreshKategori();
+  });
 
-    // Navigasi antar halaman
-    document.getElementById("btnInput").onclick = () => {
-      menuAwal.classList.remove('active');
-      formContainer.classList.add('active');
-    };
+  /* ------------------------------------------------------------
+     BAGIAN 4 — LOGIKA OTOMATISASI KATEGORI (E-MONEY)
+  ------------------------------------------------------------ */
+  const tipeEmoney = document.getElementById('tipeEmoney');
+  const kategoriEmoney = document.getElementById('kategoriEmoney');
 
-    document.getElementById("btnGrafik").onclick = () => {
-      menuAwal.classList.remove('active');
-      chartContainer.classList.add('active');
-      initBulanSelect(); // tampilkan daftar sheet
-    };
+  tipeEmoney.addEventListener('change', () => {
+    kategoriEmoney.innerHTML = '<option>Pilih...</option>';
+    if (tipeEmoney.value === '+') {
+      ['Transfer'].forEach(opt => {
+        const o = document.createElement('option');
+        o.textContent = opt;
+        kategoriEmoney.appendChild(o);
+      });
+    } else if (tipeEmoney.value === '-') {
+      ['Kebutuhan', 'Keinginan'].forEach(opt => {
+        const o = document.createElement('option');
+        o.textContent = opt;
+        kategoriEmoney.appendChild(o);
+      });
+    }
+  });
 
-    document.getElementById("backToMenu1").onclick = () => {
-      formContainer.classList.remove('active');
-      menuAwal.classList.add('active');
-    };
+  /* ------------------------------------------------------------
+     BAGIAN 5 — KONFIGURASI URL SPREADSHEET
+  ------------------------------------------------------------ */
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxHZqa0ulz1HqYZo__EHdhDweEKoWnqoL7rnZrMAdfXFYAYyQPJsr9H5wkmKTvHzNVc/exec"; // <-- GANTI DENGAN MILIKMU
 
-    document.getElementById("backToMenu2").onclick = () => {
-      chartContainer.classList.remove('active');
-      menuAwal.classList.add('active');
-    };
+  /* ------------------------------------------------------------
+   BAGIAN 6 — LOGIKA KIRIM DATA KE SPREADSHEET (KEUANGAN)
+------------------------------------------------------------ */
+const btnSimpanKeuangan = formKeuangan.querySelector('.btn-primary');
+const statusKeuangan = document.createElement('div');
+statusKeuangan.style.textAlign = "center";
+statusKeuangan.style.marginTop = "10px";
+statusKeuangan.style.fontWeight = "600";
+statusKeuangan.style.color = "#475569";
+formKeuangan.appendChild(statusKeuangan);
 
-    // Kirim data
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      statusEl.textContent = "⏳ Mengirim data...";
-      const payload = {
-        Tanggal: document.getElementById("Tanggal").value,
-        Keperluan: document.getElementById("Keperluan").value.trim(),
-        Jenis: document.getElementById("Jenis").value,
-        Tipe: document.getElementById("Tipe").value,
-        Kategori: document.getElementById("Kategori").value,
-        Jumlah: document.getElementById("Jumlah").value
-      };
-      try {
-        const res = await fetch(scriptURL, { method: "POST", body: JSON.stringify(payload) });
-        if (res.ok) {
-          statusEl.textContent = "✅ Data berhasil dikirim!";
-          statusEl.style.color = "#16a34a";
-          form.reset();
-          refreshKategori();
-        } else throw new Error();
-      } catch {
-        statusEl.textContent = "❌ Gagal mengirim data.";
-        statusEl.style.color = "#b91c1c";
-      }
+btnSimpanKeuangan.addEventListener("click", async () => {
+  const payload = {
+    Source: "Keuangan",
+    Tanggal: document.getElementById("tglKeuangan").value,
+    Keperluan: document.getElementById("keperluanKeuangan").value.trim(),
+    Jenis: document.getElementById("jenisKeuangan").value,
+    Tipe: document.getElementById("tipeKeuangan").value,
+    Kategori: document.getElementById("kategoriKeuangan").value,
+    Jumlah: document.getElementById("jumlahKeuangan").value
+  };
+
+  if (!payload.Tanggal || !payload.Keperluan || !payload.Jumlah || payload.Tipe === "Pilih...") {
+    alert("⚠️ Mohon lengkapi semua data sebelum mengirim!");
+    return;
+  }
+
+  statusKeuangan.textContent = "⏳ Mengirim data...";
+  btnSimpanKeuangan.disabled = true;
+
+  try {
+    const res = await fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify(payload)
     });
 
-    // === Dropdown bulan ===
-    async function initBulanSelect() {
-      const bulanSelect = document.getElementById("bulanSelect");
-      bulanSelect.innerHTML = "<option>Memuat...</option>";
+    if (res.ok) {
+      statusKeuangan.textContent = "✅ Data berhasil dikirim ke Keuangan_2025!";
+      statusKeuangan.style.color = "#16a34a";
+      formKeuangan.querySelectorAll("input, select").forEach(el => el.value = "");
+    } else throw new Error();
+  } catch {
+    statusKeuangan.textContent = "❌ Gagal mengirim data ke Keuangan_2025.";
+    statusKeuangan.style.color = "#b91c1c";
+  } finally {
+    btnSimpanKeuangan.disabled = false;
+  }
+});
 
-      try {
-        const res = await fetch(scriptURL + "?action=getSheets");
-        const sheets = await res.json();
-        bulanSelect.innerHTML = "";
+/* ------------------------------------------------------------
+   BAGIAN 7 — LOGIKA KIRIM DATA KE SPREADSHEET (E-MONEY)
+------------------------------------------------------------ */
+const btnSimpanEmoney = formEmoney.querySelector('.btn-primary');
+const statusEmoney = document.createElement('div');
+statusEmoney.style.textAlign = "center";
+statusEmoney.style.marginTop = "10px";
+statusEmoney.style.fontWeight = "600";
+statusEmoney.style.color = "#475569";
+formEmoney.appendChild(statusEmoney);
 
-        sheets.forEach(n => {
-          const opt = document.createElement("option");
-          opt.value = n;
-          opt.textContent = n;
-          bulanSelect.appendChild(opt);
-        });
+btnSimpanEmoney.addEventListener("click", async () => {
+  const payload = {
+    Source: "Emoney",
+    Tanggal: document.getElementById("tglEmoney").value,
+    Keperluan: document.getElementById("keperluanEmoney").value.trim(),
+    Jenis: document.getElementById("jenisEmoney").value,
+    Tipe: document.getElementById("tipeEmoney").value,
+    Kategori: document.getElementById("kategoriEmoney").value,
+    Jumlah: document.getElementById("jumlahEmoney").value
+  };
 
-        const bulanNow = new Date().toLocaleString("id-ID", { month: "long" });
-        const bulanNowCap = bulanNow.charAt(0).toUpperCase() + bulanNow.slice(1);
-        if (sheets.includes(bulanNowCap)) bulanSelect.value = bulanNowCap;
+  if (!payload.Tanggal || !payload.Keperluan || !payload.Jumlah || payload.Tipe === "Pilih...") {
+    alert("⚠️ Mohon lengkapi semua data sebelum mengirim!");
+    return;
+  }
 
-        loadCharts(bulanSelect.value);
-        bulanSelect.onchange = () => loadCharts(bulanSelect.value);
+  statusEmoney.textContent = "⏳ Mengirim data...";
+  btnSimpanEmoney.disabled = true;
 
-      } catch {
-        bulanSelect.innerHTML = "<option>Gagal memuat</option>";
-      }
-    }
+  try {
+    const res = await fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
 
-    // === Load grafik ===
-    async function loadCharts(bulan) {
-      try {
-        const res = await fetch(`${scriptURL}?action=getData&bulan=${encodeURIComponent(bulan)}`);
-        const data = await res.json();
+    if (res.ok) {
+      statusEmoney.textContent = "✅ Data berhasil dikirim ke Emoney_2025!";
+      statusEmoney.style.color = "#16a34a";
+      formEmoney.querySelectorAll("input, select").forEach(el => el.value = "");
+    } else throw new Error();
+  } catch {
+    statusEmoney.textContent = "❌ Gagal mengirim data ke Emoney_2025.";
+    statusEmoney.style.color = "#b91c1c";
+  } finally {
+    btnSimpanEmoney.disabled = false;
+  }
+});
+</script>
+  <!-- ====================== END SCRIPT SECTION ====================== -->
 
-        const kebutuhan = data.filter(d => d.Tipe === '-' && d.Kategori === 'Kebutuhan').reduce((a, b) => a + Number(b.Jumlah || 0), 0);
-        const keinginan = data.filter(d => d.Tipe === '-' && d.Kategori === 'Keinginan').reduce((a, b) => a + Number(b.Jumlah || 0), 0);
-        const totalKeluar = kebutuhan + keinginan;
-
-        const sumber = ["Gaji", "Ortu", "Lutfi", "Tarik tunai", "Transfer"];
-        const masukVal = sumber.map(k => data.filter(d => d.Tipe === '+' && d.Kategori === k).reduce((a, b) => a + Number(b.Jumlah || 0), 0));
-        const totalMasuk = masukVal.reduce((a, b) => a + b, 0);
-        const totalAll = totalMasuk + totalKeluar;
-
-        charts.forEach(c => c.destroy());
-        charts = [];
-
-        const ctx1 = document.getElementById('chartPengeluaran').getContext('2d');
-        charts.push(new Chart(ctx1, {
-          type: 'pie',
-          data: {
-            labels: [`Kebutuhan (${((kebutuhan / totalKeluar) * 100 || 0).toFixed(1)}%)`, `Keinginan (${((keinginan / totalKeluar) * 100 || 0).toFixed(1)}%)`],
-            datasets: [{ data: [kebutuhan, keinginan], backgroundColor: ['#3b82f6', '#f97316'] }]
-          },
-          options: { plugins: { title: { display: true, text: 'Pengeluaran' } } }
-        }));
-
-        const ctx2 = document.getElementById('chartPemasukan').getContext('2d');
-        charts.push(new Chart(ctx2, {
-          type: 'pie',
-          data: {
-            labels: sumber.map((s, i) => `${s} (${((masukVal[i] / totalMasuk) * 100 || 0).toFixed(1)}%)`),
-            datasets: [{ data: masukVal, backgroundColor: ['#10b981', '#06b6d4', '#6366f1', '#facc15'] }]
-          },
-          options: { plugins: { title: { display: true, text: 'Pemasukan' } } }
-        }));
-
-        const ctx3 = document.getElementById('chartRasio').getContext('2d');
-        charts.push(new Chart(ctx3, {
-          type: 'pie',
-          data: {
-            labels: [`Pemasukan (${((totalMasuk / totalAll) * 100 || 0).toFixed(1)}%)`, `Pengeluaran (${((totalKeluar / totalAll) * 100 || 0).toFixed(1)}%)`],
-            datasets: [{ data: [totalMasuk, totalKeluar], backgroundColor: ['#16a34a', '#dc2626'] }]
-          },
-          options: { plugins: { title: { display: true, text: 'Rasio Pemasukan vs Pengeluaran' } } }
-        }));
-      } catch {
-        alert("Gagal memuat grafik!");
-      }
-    }
-  </script>
 </body>
 </html>
